@@ -1,0 +1,509 @@
+# ----- Main function -----
+__main__.main
+
+    # ----- Create request dispatcher -----
+    cherrypy._cpdispatch.MethodDispatcher -> cherrypy._cpdispatch.Dispatcher.__init__
+
+    # ----- Create request handler -----
+    __main__.CustomRequestHandler -> builtins.object.__init__
+
+    # ----- Call `quickstart` -----
+    cherrypy.quickstart
+
+        # ----- Call `update` -----
+        cherrypy._cpconfig.Config.update
+
+        # ----- Call `mount` -----
+        cherrypy._cptree.Tree.mount
+
+            # ----- Create `Application` -----
+            cherrypy._cptree.Application.__init__
+
+            # ----- Call `handler` -----
+            cherrypy._cptools.HandlerTool.handler
+
+            # ----- Call `merge` -----
+            cherrypy._cptree.Application.merge
+
+        # ----- Call `subscribe` -----
+        cherrypy._HandleSignalsPlugin.subscribe
+
+        # ----- Start message bus -----
+        cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.start
+
+            # ----- Call `publish` -----
+            cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.publish => ( channel='start'
+
+                # ----- Call `start` -----
+                cherrypy.process.win32.ConsoleCtrlHandler.start
+
+                    # ----- Start timeout monitor thread -----
+                    cherrypy._TimeoutMonitor -> cherrypy.process.plugins.Monitor.start
+
+                        # ----- Call `BackgroundTask` -----
+                        # Thread function is `cherrypy._TimeoutMonitor.run`.
+                        #
+                        cherrypy.process.plugins.BackgroundTask.__init__
+
+                        # ----- Start thread -----
+                        # Thread execution starts at 2RVKM.
+                        #
+                        cherrypy.process.plugins.BackgroundTask -> threading.Thread.start
+
+                    # ===== cherrypy.process.plugins.Monitor.start =====
+
+                    # ----- Call `start` -----
+                    cherrypy._cpserver.Server.start
+
+                        # ----- Call `httpserver_from_self` -----
+                        cherrypy._cpserver.Server.httpserver_from_self
+
+                            # ----- Create `CPWSGIServer` -----
+                            cherrypy._cpwsgi_server.CPWSGIServer.__init__
+
+                                # ----- Call super method -----
+                                cherrypy._cpwsgi_server.CPWSGIServer -> cherrypy.wsgiserver.CherryPyWSGIServer.__init__
+
+                                    # ----- Create `ThreadPool` -----
+                                    cherrypy.wsgiserver.ThreadPool.__init__
+
+                                # ===== cherrypy.wsgiserver.CherryPyWSGIServer.__init__ =====
+
+                            # ===== cherrypy._cpwsgi_server.CPWSGIServer.__init__ =====
+
+                        # ===== cherrypy._cpserver.Server.httpserver_from_self =====
+
+                        # ----- Call `start` -----
+                        cherrypy._cpserver.Server -> cherrypy.process.servers.ServerAdapter.start
+
+                            # ----- Wait until the listening port is free -----
+                            cherrypy.process.servers.wait_for_free_port
+
+                            # ----- Create thread -----
+                             2IRYT
+                            # Thread function is `cherrypy.process.servers.ServerAdapter._start_http_thread`.
+                            #
+                            threading.Thread.__init__
+
+                            # ----- Start thread -----
+                            # Thread execution at 7IIXB.
+                            #
+                            threading.Thread.start
+
+                            # ----- Wait until the server is ready to serve requests -----
+                            cherrypy._cpserver.Server -> cherrypy.process.servers.ServerAdapter.wait
+
+                                # ----- Wait until the server's `ready` is True -----
+                                # Attribute is `cherrypy.process.servers.ServerAdapter.httpserver.ready`.
+                                # It is set in the thread created at 2IRYT.
+
+                                # ----- Wait until the listening port is occupied -----
+                                cherrypy.process.servers.wait_for_occupied_port
+
+                            # ===== cherrypy.process.servers.ServerAdapter.wait =====
+
+                        # ===== cherrypy.process.servers.ServerAdapter.start =====
+
+                    # ===== cherrypy._cpserver.Server.start =====
+
+                # ===== cherrypy.process.win32.ConsoleCtrlHandler.start =====
+
+            # ===== cherrypy.process.wspbus.Bus.publish =====
+
+        # ===== cherrypy.process.wspbus.Bus.start =====
+
+        # ----- Call `block` -----
+        cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.block
+
+            # ----- Call `wait` -----
+            # Wait until the state becomes `EXITING`.
+            #
+            cherrypy.process.win32.Win32Bus.wait
+
+        # ===== cherrypy.process.wspbus.Bus.block =====
+
+    # ===== cherrypy.quickstart =====
+
+# ===== __main__.main =====
+
+# ----- Thread 1 -----
+# 2RVKM
+#
+# Thread 1 checks timeout of responses.
+#
+cherrypy.process.plugins.BackgroundTask.run
+
+    # ----- Loop while `self.running` is true -----
+
+        # ----- Sleep for `self.interval` duration -----
+
+        # ----- Call `run` -----
+        # Not visible in log.
+        #
+        cherrypy._TimeoutMonitor.run
+
+            # ----- For each response -----
+
+                # ----- Call `check_timeout` -----
+                cherrypy._cprequest.Response.check_timeout
+
+                    # ----- If response has timed out -----
+
+                        # ----- Set `self.timed_out` be True -----
+
+                    # ===== If response has timed out =====
+
+                # ===== cherrypy._cprequest.Response.check_timeout =====
+
+            # ===== For each response =====
+
+        # ===== cherrypy._TimeoutMonitor.run =====
+
+    # ===== Loop while `self.running` is true =====
+
+# ===== cherrypy.process.plugins.BackgroundTask.run =====
+
+# ----- Thread 2 -----
+# 7IIXB
+#
+# Thread 2 accepts new connections and adds to the queue to be handled by work
+# threads.
+#
+cherrypy._cpserver.Server -> cherrypy.process.servers.ServerAdapter._start_http_thread
+
+    # ----- Call `start` -----
+    cherrypy._cpwsgi_server.CPWSGIServer -> cherrypy.wsgiserver.HTTPServer.start
+
+        # ----- Bind listening socket -----
+        cherrypy._cpwsgi_server.CPWSGIServer -> cherrypy.wsgiserver.HTTPServer.bind
+
+            # ----- Create listening socket -----
+            socket.socket.__init__
+
+            # ----- Call `prevent_socket_inheritance` -----
+            cherrypy.wsgiserver.prevent_socket_inheritance
+
+            # ----- Enable `SO_REUSEADDR` -----
+            socket.socket -> _socket.socket.setsockopt
+
+            # ----- Enable `TCP_NODELAY` -----
+            socket.socket -> _socket.socket.setsockopt
+
+            # ----- Bind listening socket -----
+            socket.socket -> _socket.socket.bind
+
+        # ===== cherrypy.wsgiserver.HTTPServer.bind =====
+
+        # ----- Call `settimeout` -----
+        socket.socket -> _socket.socket.settimeout
+
+        # ----- Start socket listening -----
+        socket.socket -> _socket.socket.listen
+
+        # ----- Start thread pool -----
+        cherrypy.wsgiserver.ThreadPool.start
+
+            # ----- Create worker thread -----
+            cherrypy.wsgiserver.WorkerThread.__init__
+
+            # ----- Start worker thread -----
+            # Thread execution starts at 5JNXZ
+            #
+            cherrypy.wsgiserver.WorkerThread -> threading.Thread.start
+
+        # ===== cherrypy.wsgiserver.ThreadPool.start =====
+
+        # ----- Loop while `self.ready` is true -----
+
+            # ----- Call `tick` -----
+            cherrypy._cpwsgi_server.CPWSGIServer -> cherrypy.wsgiserver.HTTPServer.tick
+
+                # ----- Accept connection -----
+                socket.socket.accept
+
+                # ----- Call `prevent_socket_inheritance` -----
+                cherrypy.wsgiserver.prevent_socket_inheritance
+
+                # ----- Call `settimeout` -----
+                socket.socket -> _socket.socket.settimeout
+
+                # ----- Create connection instance -----
+                cherrypy._cpwsgi_server.CPWSGIServer -> cherrypy.wsgiserver.CherryPyWSGIServer.ConnectionClass
+
+                    # ----- Create connection instance -----
+                    cherrypy.wsgiserver.CherryPyWSGIServer -> cherrypy.wsgiserver.HTTPServer.ConnectionClass
+
+                        # ----- Create connection instance -----
+                        cherrypy.wsgiserver.HTTPConnection.__init__
+
+                    # ===== cherrypy.wsgiserver.HTTPServer.ConnectionClass =====
+
+                # ===== cherrypy.wsgiserver.CherryPyWSGIServer.ConnectionClass =====
+
+                # ----- Add connection instance to queue -----
+                # The connection instance will be handled by a work thread at 5JNXZ.
+
+        # ===== Loop while `self.ready` is true =====
+
+    # ===== cherrypy.wsgiserver.HTTPServer.start =====
+
+# ===== cherrypy.process.servers.ServerAdapter._start_http_thread =====
+
+# ----- Thread 3 -----
+# 5JNXZ
+#
+# Thread 3 is work thread that handles connections in the queue.
+#
+cherrypy.wsgiserver.WorkerThread.run
+
+    # ----- Loop forever -----
+
+        # ----- Get connection instance from queue -----
+
+        # ----- Call `communicate` -----
+        cherrypy.wsgiserver.HTTPConnection.communicate
+
+            # ----- Create `RequestHandlerClass` instance -----
+            cherrypy.wsgiserver.HTTPConnection.RequestHandlerClass
+
+                # ----- Create `HTTPRequest` -----
+                cherrypy.wsgiserver.HTTPRequest.__init__
+
+            # ===== cherrypy.wsgiserver.HTTPConnection.RequestHandlerClass =====
+
+            # ----- Call `parse_request` -----
+            cherrypy.wsgiserver.HTTPRequest.parse_request
+
+            # ----- If the request's `ready` is not true -----
+
+                # ----- Return -----
+
+            # ----- Call `respond` -----
+            cherrypy.wsgiserver.HTTPRequest.respond
+
+                # ----- Create `KnownLengthRFile` -----
+                cherrypy.wsgiserver.KnownLengthRFile.__init__
+
+                # ----- Create `WSGIGateway_10` -----
+                cherrypy.wsgiserver.WSGIGateway_10 -> cherrypy.wsgiserver.WSGIGateway.__init__
+
+                # ----- Call `respond` -----
+                cherrypy.wsgiserver.WSGIGateway_10 -> cherrypy.wsgiserver.WSGIGateway.respond
+
+                    # ----- Call `Tree` -----
+                    cherrypy._cptree.Tree.__call__
+
+                        # ----- Call `Application` -----
+                        cherrypy._cptree.Application.__call__
+
+                            # ----- Call `CPWSGIApp` -----
+                            cherrypy._cpwsgi.CPWSGIApp.__call__
+
+                                # ----- Call `ExceptionTrapper` -----
+                                cherrypy._cpwsgi.ExceptionTrapper.__call__
+
+                                    # ----- Create `_TrappedResponse` -----
+                                    cherrypy._cpwsgi._TrappedResponse.__init__
+
+                                        # ----- Call `trap` -----
+                                        cherrypy._cpwsgi._TrappedResponse.trap
+
+                                            # ----- Call `InternalRedirector` -----
+                                            cherrypy._cpwsgi.InternalRedirector.__call__
+
+                                                # ----- Call `tail` -----
+                                                cherrypy._cpwsgi.CPWSGIApp.tail
+
+                                                    # ----- Call `response_class` -----
+                                                    cherrypy._cpwsgi.CPWSGIApp.response_class
+
+                                                        # ----- Create `AppResponse` -----
+                                                        cherrypy._cpwsgi.AppResponse.__init__
+
+                                                            # ----- Call `run` -----
+                                                            cherrypy._cpwsgi.AppResponse.run
+
+                                                                # ----- Call `get_serving` -----
+                                                                cherrypy._cptree.Application.get_serving
+
+                                                                    # ----- Call `request_class` -----
+                                                                    cherrypy._cptree.Application.request_class
+
+                                                                        # ----- Create `Request` -----
+                                                                        cherrypy._cprequest.Request.__init__
+
+                                                                    # ----- Call `response_class` -----
+                                                                    cherrypy._cptree.Application.response_class
+
+                                                                        # ----- Create `Response` -----
+                                                                        cherrypy._cprequest.Response.__init__
+
+                                                                    # ----- Create `_Serving` -----
+                                                                    cherrypy._Serving -> builtins.object.__init__
+
+                                                                    # ----- Call `load` -----
+                                                                    cherrypy._Serving.load
+
+                                                                    # ----- Call `publish` -----
+                                                                    cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.publish => ( channel='acquire_thread'
+
+                                                                        # ----- Call `acquire_thread` -----
+                                                                        cherrypy.process.plugins.ThreadManager.acquire_thread
+
+                                                                            # ----- Call `publish` -----
+                                                                            cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.publish => ( channel='start_thread'
+
+                                                                        # ===== cherrypy.process.plugins.ThreadManager.acquire_thread =====
+
+                                                                    # ----- Call `publish` -----
+                                                                    cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.publish => ( channel='before_request'
+
+                                                                    # ----- Call `translate_headers` -----
+                                                                    cherrypy._cpwsgi.AppResponse.translate_headers
+
+                                                                    # ----- Call `run` -----
+                                                                    cherrypy._cprequest.Request.run
+
+                                                                        # ----- Call `respond` -----
+                                                                        cherrypy._cprequest.Request.respond
+
+                                                                            # ----- Call `process_headers` -----
+                                                                            cherrypy._cprequest.Request.process_headers
+
+                                                                            # ----- Call `get_resource` -----
+                                                                            cherrypy._cprequest.Request.get_resource
+
+                                                                                # ----- Call `find_config` -----
+                                                                                cherrypy._cptree.Application.find_config
+
+                                                                                # ----- Create `MethodDispatcher` -----
+                                                                                cherrypy._cpdispatch.MethodDispatcher.__call__
+
+                                                                                    # ----- Call `find_config` -----
+                                                                                    cherrypy._cpdispatch.MethodDispatcher -> cherrypy._cpdispatch.Dispatcher.find_handler
+
+                                                                                    # ----- Create `LateParamPageHandler` -----
+                                                                                    cherrypy._cpdispatch.LateParamPageHandler -> cherrypy._cpdispatch.PageHandler.__init__
+
+                                                                                # ===== cherrypy._cpdispatch.MethodDispatcher.__call__ =====
+
+                                                                            # ===== cherrypy._cprequest.Request.get_resource =====
+
+                                                                            # ----- Create `RequestBody` -----
+                                                                            cherrypy._cpreqbody.RequestBody.__init__
+
+                                                                                # ----- Call super method -----
+                                                                                cherrypy._cpreqbody.RequestBody -> cherrypy._cpreqbody.Entity.__init__
+
+                                                                                # ----- Call `NamespaceSet` -----
+                                                                                cherrypy.lib.reprconf.NamespaceSet.__call__
+
+                                                                                # ----- Call `process_query_string` -----
+                                                                                cherrypy._cprequest.Request.process_query_string
+
+                                                                                # ----- Call `ResponseEncoder` -----
+                                                                                cherrypy.lib.encoding.ResponseEncoder.__call__
+
+                                                                                    # ----- Call `LateParamPageHandler` -----
+                                                                                    cherrypy._cpdispatch.LateParamPageHandler -> cherrypy._cpdispatch.PageHandler.__call__
+
+                                                                                        # ----- Call `POST` -----
+                                                                                        __main__.CustomRequestHandler.POST
+
+                                                                                            # ----- Read request body -----
+                                                                                            cherrypy.wsgiserver.KnownLengthRFile.read
+
+                                                                                        # ===== Call `POST` =====
+                                                                                        # Return value is response body.
+
+                                                                                    # ===== cherrypy._cpdispatch.PageHandler.__call__ =====
+
+                                                                                # ----- Call `finalize` -----
+                                                                                cherrypy._cprequest.Response.finalize
+
+                                                                            # ===== cherrypy._cpreqbody.RequestBody.__init__ =====
+
+                                                                        # ===== cherrypy._cprequest.Request.respond =====
+
+                                                                    # =====  cherrypy._cprequest.Request.run =====
+
+                                                                # ===== cherrypy._cptree.Application.get_serving =====
+
+                                                            # ===== cherrypy._cpwsgi.AppResponse.run =====
+
+                                                            # ----- Call `start_response` -----
+                                                            cherrypy.wsgiserver.WSGIGateway_10 -> cherrypy.wsgiserver.WSGIGateway.start_response
+
+                                                        # ===== cherrypy._cpwsgi.AppResponse.__init__ =====
+
+                                                    # ===== cherrypy._cpwsgi.CPWSGIApp.response_class =====
+
+                                                # ===== cherrypy._cpwsgi.CPWSGIApp.tail =====
+
+                                            # ===== cherrypy._cpwsgi.InternalRedirector.__call__ =====
+
+                                        # ===== cherrypy._cpwsgi._TrappedResponse.trap =====
+
+                                    # ===== cherrypy._cpwsgi._TrappedResponse.__init__ =====
+
+                                # ===== cherrypy._cpwsgi.ExceptionTrapper.__call__ =====
+
+                            # ===== cherrypy._cpwsgi.CPWSGIApp.__call__ =====
+
+                        # ===== cherrypy._cptree.Application.__call__ =====
+
+                    # ===== cherrypy._cptree.Tree.__call__ =====
+
+                    # ----- Call `write` -----
+                    cherrypy.wsgiserver.WSGIGateway_10 -> cherrypy.wsgiserver.WSGIGateway.write
+
+                        # ----- Write response headers -----
+                        cherrypy.wsgiserver.HTTPRequest.send_headers
+
+                        # ----- Write response body -----
+                        cherrypy.wsgiserver.HTTPRequest.write
+
+                        # ----- Call `close` -----
+                        cherrypy._cpwsgi._TrappedResponse.close
+
+                            # ----- Call `close` -----
+                            cherrypy._cpwsgi.AppResponse.close
+
+                                # ----- Call `release_serving` -----
+                                cherrypy._cptree.Application.release_serving
+
+                                    # ----- Call `publish` -----
+                                    cherrypy.process.win32.Win32Bus -> cherrypy.process.wspbus.Bus.publish => ( channel='after_request'
+
+                                    # ----- Call `close` -----
+                                    cherrypy._cprequest.Request.close
+
+                                    # ----- Call `clear` -----
+                                    cherrypy._Serving.clear
+
+                                # ===== cherrypy._cptree.Application.release_serving =====
+
+                            # ===== cherrypy._cpwsgi.AppResponse.close =====
+
+                        # ===== cherrypy._cpwsgi._TrappedResponse.close =====
+
+                    # ===== cherrypy.wsgiserver.WSGIGateway.write =====
+
+                # ===== cherrypy.wsgiserver.WSGIGateway_10 -> cherrypy.wsgiserver.WSGIGateway.respond =====
+
+                # ----- If the request's `close_connection` is true -----
+
+                    # ----- Return -----
+
+                # ===== If the request's `close_connection` is true =====
+
+            # ===== cherrypy.wsgiserver.HTTPRequest.respond =====
+
+        # ===== cherrypy.wsgiserver.HTTPConnection.communicate =====
+
+        # ----- Close connection -----
+        cherrypy.wsgiserver.HTTPConnection.close
+
+    # ===== Loop forever =====
+
+# ===== cherrypy.wsgiserver.WorkerThread.run =====
